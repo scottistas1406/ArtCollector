@@ -11,19 +11,30 @@ import {
 
 const Search = (props) => {
   // Make sure to destructure setIsLoading and setSearchResults from the props
-
+  const {setIsLoading, setSearchResults} = props;
 
   /**
    * We are at the Search component, a child of app. This has a form, so we need to use useState for
    * our controlled inputs:
    * 
    * centuryList, setCenturyList (default should be an empty array, [])
-   * classificationList, setClassificationList (default should be an empty array, [])
-   * queryString, setQueryString (default should be an empty string, '')
-   * century, setCentury (default should be the string 'any')
-   * classification, setClassification (default should be the string 'any')
+   * */
+   const [centuryList, setCenturyList] = useState([]);
+   
+   /** classificationList, setClassificationList (default should be an empty array, [])
    */
+   const [classificationList, setClassificationList] = useState([]);
+   /**
+   * queryString, setQueryString (default should be an empty string, '')
+    */
+   const [queryString, setQueryString] = useState('');
+   /**
+   century, setCentury (default should be the string 'any')*/
+  const [century, setCentury] = useState('any');
 
+  /* classification, setClassification (default should be the string 'any')
+   */
+  const [classification, setClassification] = useState('any');
 
   /**
    * Inside of useEffect, use Promise.all([]) with fetchAllCenturies and fetchAllClassifications
@@ -32,8 +43,15 @@ const Search = (props) => {
    * 
    * Make sure to console.error on caught errors from the API methods.
    */
-  useEffect(() => {
-
+    useEffect(() => {
+Promise.all([fetchAllCenturies(), fetchAllClassifications()])
+.then(([allCenturies,allClassifications]) => {
+  setCenturyList(allCenturies);
+  setClassificationList(allClassifications);
+})
+.catch(error =>{
+  console.error('Error fetching data:', error);
+})
   }, []);
 
   /**
@@ -61,29 +79,37 @@ const Search = (props) => {
         id="keywords" 
         type="text" 
         placeholder="enter keywords..." 
-        value={/* this should be the query string */} 
-        onChange={/* this should update the value of the query string */}/>
+        value={queryString} 
+         onChange={(e) => setQueryString(e.target.value)} /> 
+        
     </fieldset>
     <fieldset>
       <label htmlFor="select-classification">Classification <span className="classification-count">({ classificationList.length })</span></label>
       <select 
         name="classification"
         id="select-classification"
-        value={/* this should be the classification */} 
-        onChange={/* this should update the value of the classification */}>
+        value={century} 
+        onChange={(e) => setQueryString(e.target.value)} >
         <option value="any">Any</option>
         {/* map over the classificationList, return an <option /> */}
+        {classificationList.map(classificationItem => (
+      <option key={classificationItem} value={classificationItem}>{classificationItem}</option>
+        ))}
       </select>
+
     </fieldset>
     <fieldset>
       <label htmlFor="select-century">Century <span className="century-count">({ centuryList.length })</span></label>
       <select 
         name="century" 
         id="select-century"
-        value={/* this should be the century */} 
-        onChange={/* this should update the value of the century */}>
+        value={century} 
+        onChange={(e) => setCentury(e.target.value)}>
         <option value="any">Any</option>
         {/* map over the centuryList, return an <option /> */}
+        {centuryList.map(centuryItem => (
+      <option key={centuryItem} value={centuryItem}>{centuryItem}</option>
+        ))}
       </select>
      </fieldset>
     <button>SEARCH</button>
