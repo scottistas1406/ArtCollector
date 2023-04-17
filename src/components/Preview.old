@@ -1,0 +1,71 @@
+import React from 'react';
+import { fetchQueryResultsFromURL } from '../api';
+
+const Preview = (props) => {
+  // Destructure setSearchResults, setFeaturedResult, and setIsLoading from props
+  // Also destructure info and records from props.searchResults
+  // Provide default values for info and records if props.searchResults is undefined
+  const { setSearchResults, setFeaturedResult, setIsLoading } = props;
+  const { info, records } = props.searchResults ?? {};
+
+  // Define the fetchPage function to fetch query results from the provided URL
+  // This function has access to setIsLoading, setSearchResults, etc... due to closure
+  async function fetchPage(pageUrl) {
+    setIsLoading(true);
+
+    try {
+      const results = await fetchQueryResultsFromURL(pageUrl);
+      setSearchResults(results);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <aside id="preview">
+      <header className="pagination">
+        {/* This button should be disabled if nothing is set in info.prev, and should call fetchPage with info.prev when clicked */}
+        <button
+          disabled={!info?.prev} // Use nullish coalescing operator to check for undefined or null value
+          className="previous"
+          onClick={() => fetchPage(info?.prev)} // Use nullish coalescing operator to check for undefined or null value
+        >
+          Previous
+        </button>
+        {/* This button should be disabled if nothing is set in info.next, and should call fetchPage with info.next when clicked */}
+        <button
+          disabled={!info?.next} 
+          className="next"
+          onClick={() => fetchPage(info?.next)} // Use nullish coalescing operator to check for undefined or null value
+        >
+          Next
+        </button>
+      </header>
+      <section className="results">
+        {records?.map((record, index) => (
+          <div
+            key={index}
+            className="object-preview"
+            onClick={(event) => {
+              event.preventDefault();
+              setFeaturedResult(record);
+            }}
+          >
+            {record.primaryimageurl && (
+              <img src={record.primaryimageurl} alt={record.description} />
+            )}
+            {record.title ? (
+              <h3>{record.title}</h3>
+            ) : (
+              <h3>MISSING INFO</h3>
+            )}
+          </div>
+        ))}
+      </section>
+    </aside>
+  );
+};
+
+export default Preview;

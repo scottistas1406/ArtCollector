@@ -1,9 +1,4 @@
 import React from 'react';
-
-/**
- * We need to import fetchQueryResultsFromURL since we will sometimes have urls in info.prev and info.next
- * which are query urls.
- */
 import { fetchQueryResultsFromURL } from '../api';
 
 const Preview = (props) => {
@@ -13,12 +8,8 @@ const Preview = (props) => {
    * 
    * You need info, records, setSearchResults, setFeaturedResult, and setIsLoading as available constants
    */
-    const { setSearchResults, setFeaturedResult, setIsLoading} = props;
-    const { info, records } = props.searchResults ?? {};
-    // now you can use `info`, `records`, `setSearchResults`, `setFeaturedResult`, and `setIsLoading` as constants in the Preview component
-    // ...
-  
-
+  const { setSearchResults, setFeaturedResult, setIsLoading } = props;
+  const { info, records } = props.searchResults ?? {}; // Provide default values for info and records if props.searchResults is undefined
 
   /**
    * Don't touch this function, it's good to go.
@@ -40,21 +31,25 @@ const Preview = (props) => {
 
   return (
     <aside id="preview">
-    <header className="pagination">
-      {/* This button should be disabled if nothing is set in info.prev, and should call fetchPage with info.prev when clicked */}
-      <button 
-        disabled={!info?.prev} 
-        className="previous"
-        onClick={() => fetchPage(info?.prev)}
-        > Previous </button>
-      {/* This button should be disabled if nothing is set in info.next, and should call fetchPage with info.next when clicked */}
-      <button
+      <header className="pagination">
+        {/* This button should be disabled if nothing is set in info.prev, and should call fetchPage with info.prev when clicked */}
+        <button
+          disabled={!info?.prev} // Use nullish coalescing operator to check for undefined or null value
+          className="previous"
+          onClick={() => fetchPage(info?.prev)} // Use nullish coalescing operator to check for undefined or null value
+        >
+          Previous
+        </button>
+        {/* This button should be disabled if nothing is set in info.next, and should call fetchPage with info.next when clicked */}
+        <button
           disabled={!info?.next} 
           className="next"
           onClick={() => fetchPage(info?.next)}//use null incase undefined ??
-        > Next </button>
-    </header>
-    <section className="results">
+        >
+          Next
+        </button>
+      </header>
+      <section className="results">
         {records?.map((record, index) => (
           <div
             key={index}

@@ -8,6 +8,6 @@ function Loading() {
         </div>
     );
 }
-//export function out in index.js
-// if not try this sucka
+// Export the component as the default export
 export default Loading;
+
